@@ -1,0 +1,15 @@
+{
+  "name": "desafio-teste-truco",
+  "version": "1.0.0",
+  "description": "Casos de teste (Jest) para Truco Paulista com 2 duplas",
+  "main": "src/truco.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
