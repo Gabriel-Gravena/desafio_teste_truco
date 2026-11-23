@@ -1,13 +1,7 @@
-/**
- * Truco Paulista — quem vence cada rodada (vaza) e quem vence a mão.
- *
- * Jogadores 0, 1, 2 e 3 sentados em sentido anti-horário.
- * Time 0 = jogadores 0 e 2 | Time 1 = jogadores 1 e 3.
- */
 const { timeDoJogador, vencedorRodada, vencedorMao } = require('../src/truco');
 
 const c = (valor, naipe) => ({ valor, naipe });
-const vira = c('4', 'ouros'); // manilha = 5
+const vira = c('4', 'ouros');
 
 describe('timeDoJogador', () => {
   test('jogadores 0 e 2 são do time 0; 1 e 3 do time 1', () => {

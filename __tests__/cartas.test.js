@@ -1,11 +1,3 @@
-/**
- * Truco Paulista — baralho, manilhas e força das cartas.
- *
- * Baralho "sujo" de 40 cartas (sem 8, 9, 10 e coringas).
- * Ordem crescente das cartas comuns: 4 5 6 7 Q J K A 2 3
- * Ordem crescente dos naipes (só importa para manilhas): ouros < espadas < copas < paus
- * Manilha = valor imediatamente acima da "vira" (cíclico: vira 3 => manilha 4).
- */
 const {
   VALORES,
   NAIPES,
@@ -127,7 +119,7 @@ describe('calcularManilha', () => {
 });
 
 describe('ehManilha', () => {
-  const vira = c('K', 'ouros'); // manilha = A
+  const vira = c('K', 'ouros');
 
   test('identifica as 4 manilhas', () => {
     NAIPES.forEach((n) => expect(ehManilha(c('A', n), vira)).toBe(true));
@@ -140,7 +132,7 @@ describe('ehManilha', () => {
 });
 
 describe('forcaCarta / compararCartas', () => {
-  const vira = c('4', 'ouros'); // manilha = 5
+  const vira = c('4', 'ouros');
 
   test('forcaCarta retorna um número', () => {
     expect(typeof forcaCarta(c('3', 'paus'), vira)).toBe('number');
@@ -180,8 +172,8 @@ describe('forcaCarta / compararCartas', () => {
   test('o mesmo valor muda de força conforme a vira', () => {
     const q = c('Q', 'paus');
     const k = c('K', 'paus');
-    expect(compararCartas(q, k, c('4', 'ouros'))).toBe(-1); // Q comum < K
-    expect(compararCartas(q, k, c('7', 'ouros'))).toBe(1); // Q é manilha
+    expect(compararCartas(q, k, c('4', 'ouros'))).toBe(-1);
+    expect(compararCartas(q, k, c('7', 'ouros'))).toBe(1);
   });
 
   test('lança erro para carta inválida', () => {

@@ -1,22 +1,8 @@
-/**
- * Truco Paulista — partida completa entre 2 duplas.
- *
- * - Jogadores 0..3; time 0 = {0, 2}, time 1 = {1, 3}.
- * - Quem começa a mão é o jogador à direita do dealer: (dealer + 1) % 4.
- *   O dealer avança uma posição a cada nova mão.
- * - A ordem de jogada é 0 -> 1 -> 2 -> 3 -> 0 ...
- * - Quem vence a rodada começa a próxima; se a rodada empatar, começa quem iniciou a rodada empatada.
- * - Mão vale 1 ponto; truco 3, seis 6, nove 9, doze 12. Partida até 12 pontos.
- * - Correr de uma aposta dá ao time que pediu o valor que a mão valia ANTES do pedido.
- * - Mão de onze: time com 11 decide jogar (vale 3) ou correr (adversário ganha 1). Sem truco.
- * - Mão de ferro: ambos com 11, vale 1, sem truco.
- */
 const { PartidaTruco } = require('../src/truco');
 
 const c = (valor, naipe) => ({ valor, naipe });
-const VIRA = c('4', 'ouros'); // manilha = 5
+const VIRA = c('4', 'ouros');
 
-// jogador 0 tem as 2 maiores manilhas => time 0 vence as 2 primeiras rodadas
 const DIST_TIME0 = {
   vira: VIRA,
   maos: [
@@ -27,7 +13,6 @@ const DIST_TIME0 = {
   ],
 };
 
-// jogador 1 tem as 2 maiores manilhas => time 1 vence as 2 primeiras rodadas
 const DIST_TIME1 = {
   vira: VIRA,
   maos: [
@@ -38,18 +23,15 @@ const DIST_TIME1 = {
   ],
 };
 
-/** Joga as cartas na ordem, sempre com o jogador da vez. */
 function jogar(partida, ...cartas) {
   cartas.forEach((carta) => partida.jogarCarta(partida.vez, carta));
 }
 
-/** Joga a mão DIST_TIME0 até o time 0 vencer (2 rodadas), partindo do jogador 0. */
 function time0VenceMao(partida) {
   jogar(partida, c('5', 'paus'), c('4', 'paus'), c('6', 'paus'), c('7', 'paus'));
   jogar(partida, c('5', 'copas'), c('4', 'copas'), c('6', 'copas'), c('7', 'copas'));
 }
 
-/** Joga a mão DIST_TIME1 até o time 1 vencer, partindo do jogador 0. */
 function time1VenceMao(partida) {
   jogar(partida, c('4', 'paus'), c('5', 'paus'), c('6', 'paus'), c('7', 'paus'));
   jogar(partida, c('5', 'copas'), c('6', 'copas'), c('7', 'copas'), c('4', 'copas'));
@@ -226,7 +208,7 @@ describe('ordem de jogada', () => {
         [c('6', 'paus'), c('6', 'copas'), c('6', 'espadas')],
       ],
     };
-    const p = new PartidaTruco({ dealer: 0 }); // começa o jogador 1
+    const p = new PartidaTruco({ dealer: 0 });
     p.novaMao(dist);
     jogar(p, c('3', 'copas'), c('4', 'paus'), c('6', 'paus'), c('3', 'paus'));
     expect(p.resultadosRodadas).toEqual([null]);
@@ -305,10 +287,10 @@ describe('resultado da mão', () => {
     };
     const p = new PartidaTruco({ dealer: 3 });
     p.novaMao(dist);
-    jogar(p, c('5', 'paus'), c('6', 'paus'), c('6', 'copas'), c('6', 'espadas')); // time 0 (jogador 0)
-    jogar(p, c('4', 'paus'), c('5', 'copas'), c('7', 'paus'), c('7', 'espadas')); // time 1 (jogador 1)
+    jogar(p, c('5', 'paus'), c('6', 'paus'), c('6', 'copas'), c('6', 'espadas'));
+    jogar(p, c('4', 'paus'), c('5', 'copas'), c('7', 'paus'), c('7', 'espadas'));
     expect(p.vez).toBe(1);
-    jogar(p, c('4', 'copas'), c('7', 'copas'), c('Q', 'paus'), c('5', 'espadas')); // time 0 (jogador 0)
+    jogar(p, c('4', 'copas'), c('7', 'copas'), c('Q', 'paus'), c('5', 'espadas'));
     expect(p.resultadosRodadas).toEqual([0, 1, 0]);
     expect(p.placar).toEqual([1, 0]);
   });
@@ -407,10 +389,10 @@ describe('truco e aumentos', () => {
 
   test('sequência completa 3 -> 6 -> 9 -> 12', () => {
     p.pedirTruco(0);
-    p.responderTruco(1, 'aumentar'); // 6
-    p.responderTruco(0, 'aumentar'); // 9
+    p.responderTruco(1, 'aumentar');
+    p.responderTruco(0, 'aumentar');
     expect(p.apostaPendente).toEqual({ valor: 9, time: 0 });
-    p.responderTruco(3, 'aumentar'); // 12
+    p.responderTruco(3, 'aumentar');
     expect(p.apostaPendente).toEqual({ valor: 12, time: 1 });
     expect(p.valorMao).toBe(9);
     p.responderTruco(2, 'aceitar');
@@ -449,7 +431,7 @@ describe('truco e aumentos', () => {
     expect(() => p.pedirTruco(0)).toThrow();
     p.jogarCarta(0, c('5', 'paus'));
     p.jogarCarta(1, c('4', 'paus'));
-    expect(() => p.pedirTruco(2)).toThrow(); // parceiro também não pode
+    expect(() => p.pedirTruco(2)).toThrow();
   });
 
   test('depois de aceito, o time adversário pode pedir seis na sua vez', () => {
@@ -463,7 +445,7 @@ describe('truco e aumentos', () => {
   test('depois que o adversário aumentou, o time original pode pedir de novo na sua vez', () => {
     p.pedirTruco(0);
     p.responderTruco(1, 'aumentar');
-    p.responderTruco(0, 'aceitar'); // vale 6, último a pedir: time 1
+    p.responderTruco(0, 'aceitar');
     expect(() => p.pedirTruco(0)).not.toThrow();
     expect(p.apostaPendente).toEqual({ valor: 9, time: 0 });
   });
